@@ -6,12 +6,17 @@ import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 dotenv.config();
 
-if (!process.env.SECRET) throw new Error("SECRET no existe");
 const SECRET = process.env.SECRET;
+if (!SECRET) throw new Error("SECRET no existe");
 
 indexRouter.get("/users", async (req, res) => {
   const documentos = await userModel.find();
-  res.status(200).json(documentos);
+  res.status(200).json({ documentos });
+});
+
+indexRouter.get("/profile", async (req, res) => {
+  if (!req.user) return res.status(401).json({ error: "No autorizado" });
+  res.json({ user: req.user });
 });
 
 indexRouter.post("/register-user", async (req, res) => {
