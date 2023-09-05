@@ -15,7 +15,7 @@ indexRouter.get("/users", async (req, res) => {
 });
 
 indexRouter.get("/profile", async (req, res) => {
-  if (!req.user) return res.status(401).json({ error: "No autorizado" });
+  if (!req.user) return res.redirect("/api/users");
   res.json({ user: req.user });
 });
 
