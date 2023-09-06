@@ -25,7 +25,10 @@ export default (req, res, next) => {
   jwt.verify(value, SECRET, async (error, data) => {
     if (error) {
       console.log(error);
-      return res.json(error);
+      return res
+        .clearCookie("token")
+        .status(401)
+        .json({ error: "No autorizado" });
     }
     const { id } = data;
     const user = await userModel.findOne({ _id: id });
