@@ -30,16 +30,8 @@ indexRouter.post("/chat", async (req, res) => {
   if (!req.user) return res.status(401).json({ error: "No autorizado" });
   const { body } = req.body;
   try {
-    // comprobar la existencia de body
-    if (!body) throw new Error();
-  } catch (error) {
-    console.log(error);
-    return res
-      .status(400)
-      .json({ error: "Invalid data sended to create message" });
-  }
-  const data = { owner: req.user.name, body };
-  try {
+    if (!body) throw new Error("Invalid data sended to create message");
+    const data = { owner: req.user.name, body };
     const newDocument = await messageModel.create(data);
     return res.status(200).json({ success: true, document: newDocument });
   } catch (error) {
