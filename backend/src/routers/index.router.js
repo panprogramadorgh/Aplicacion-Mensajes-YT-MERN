@@ -10,33 +10,34 @@ dotenv.config();
 const SECRET = process.env.SECRET;
 if (!SECRET) throw new Error("SECRET no existe");
 
-indexRouter.get("/users", async (req, res) => {
-  const documentos = await userModel.find();
-  res.status(200).json({ documentos });
-});
+// comentado por motivos de seguridad
+// indexRouter.get("/users", async (req, res) => {
+//   const documentos = await userModel.find();
+//   res.status(200).json({ documentos });
+// });
 
 indexRouter.get("/profile", async (req, res) => {
   if (!req.user) return res.status(401).json({ error: "No autorizado" });
-  res.json({ user: req.user });
+  res.json({ success: true, user: req.user });
 });
 
 indexRouter.get("/chat", async (req, res) => {
   if (!req.user) return res.status(401).json({ error: "No autorizado" });
   const chat = await messageModel.find();
-  return res.json(chat);
+  return res.json({ success: true, chat });
 });
 
 indexRouter.post("/chat", async (req, res) => {
   if (!req.user) return res.status(401).json({ error: "No autorizado" });
   const { body } = req.body;
   try {
-    if (!body) throw new Error("Invalid data sended to create message");
+    if (!body) throw new Error();
     const data = { owner: req.user.name, body };
     const newDocument = await messageModel.create(data);
     return res.status(200).json({ success: true, document: newDocument });
   } catch (error) {
     console.error(error);
-    res.status(400).json({ error: error.message });
+    res.status(400).json({ error: "Invalid data sent to create message" });
   }
 });
 
@@ -61,6 +62,7 @@ indexRouter.post("/register-user", async (req, res) => {
     });
     const document = await newUser.save();
     res.status(200).json({
+      success: true,
       message: "Documento insertado con existo",
       document,
     });
