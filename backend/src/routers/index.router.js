@@ -17,18 +17,18 @@ if (!SECRET) throw new Error("SECRET no existe");
 // });
 
 indexRouter.get("/profile", async (req, res) => {
-  if (!req.user) return res.status(401).json({ error: "No autorizado" });
+  if (!req.user) return res.status(401).json({ success: false, error: "No autorizado" });
   res.json({ success: true, user: req.user });
 });
 
 indexRouter.get("/chat", async (req, res) => {
-  if (!req.user) return res.status(401).json({ error: "No autorizado" });
+  if (!req.user) return res.status(401).json({ success: false, error: "No autorizado" });
   const chat = await messageModel.find();
   return res.json({ success: true, chat });
 });
 
 indexRouter.post("/chat", async (req, res) => {
-  if (!req.user) return res.status(401).json({ error: "No autorizado" });
+  if (!req.user) return res.status(401).json({ success: false, error: "No autorizado" });
   const { body } = req.body;
   try {
     if (!body) throw new Error();
@@ -37,7 +37,7 @@ indexRouter.post("/chat", async (req, res) => {
     return res.status(200).json({ success: true, document: newDocument });
   } catch (error) {
     console.error(error);
-    res.status(400).json({ error: "Invalid data sent to create message" });
+    res.status(400).json({ success: false, error: "Invalid data sent to create message" });
   }
 });
 
@@ -69,11 +69,11 @@ indexRouter.post("/register-user", async (req, res) => {
   } catch (error) {
     if (error.code ?? error.code === 11000) {
       const [dupKey] = Object.keys(error.keyPattern);
-      res.status(422).json({ error: `${dupKey} already exists` });
+      res.status(422).json({ success: false, error: `${dupKey} already exists` });
       return;
     }
 
-    res.status(422).json({ error: error.message });
+    res.status(422).json({ success: false, error: error.message });
   }
 });
 
@@ -90,7 +90,7 @@ indexRouter.post("/user-login", async (req, res) => {
       throw new Error("Password is invaid");
     }
   } catch (error) {
-    return res.status(400).json({ error: error.message });
+    return res.status(400).json({ success: false, error: error.message });
   }
 
   try {
@@ -115,7 +115,7 @@ indexRouter.post("/user-login", async (req, res) => {
     console.log(error);
     return res
       .status(401)
-      .json({ error: "El nombre o la contraseña con invalidos" });
+      .json({ success: false, error: "El nombre o la contraseña con invalidos" });
   }
 });
 
